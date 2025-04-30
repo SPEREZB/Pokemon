@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-12">
+      <div class="flex items-center justify-center mb-6">
+        <img src="https://raw.githubusercontent.com/PokeAPI/media/master/logo/pokeapi_256.png"
+             alt="PokéAPI"
+             class="h-16 mr-4">
+        <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white sm:text-5xl">
+          <span class="block text-blue-600 dark:text-blue-400">Pokédex</span>
+        </h1>
+      </div>
+
+      <div class="max-w-md mx-auto relative">
+    <form id="search-form" method="get" action="{% url 'pokemon-list-html' %}" class="relative">
+  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+    <i class="fas fa-search text-gray-400"></i>
+  </div>
+  <input
+    id="search-input"
+    type="text"
+    name="search"
+    value="{{ search_query }}"
+    class="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+    placeholder="Buscar Pokémon..."
+  >
+</form>
+      </div>
+    </div>
+
+    {% if pokemon_list %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+      {% for pokemon in pokemon_list %}
+        {% include '../components/pokemon_card.html' with pokemon=pokemon %}
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-16">
+      <div class="mx-auto h-24 w-24 text-gray-400 dark:text-gray-500">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      </div>
+      <h3 class="mt-2 text-xl font-medium text-gray-900 dark:text-white">No se encontraron Pokémon</h3>
+      <p class="mt-1 text-gray-500 dark:text-gray-400">Intenta con otro término de búsqueda</p>
+    </div>
+    {% endif %}
+
+    {% if pagination.has_previous or pagination.has_next %}
+    <div class="flex items-center justify-between mt-12 border-t border-gray-200 dark:border-gray-700 pt-6">
+      <div class="flex-1 flex justify-between sm:justify-end">
+        {% if pagination.has_previous %}
+        <a href="?page={{ pagination.previous_page }}{% if search_query %}&search={{ search_query }}{% endif %}"
+           class="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+          <i class="fas fa-chevron-left mr-2 text-gray-500 dark:text-gray-400"></i>
+          Anterior
+        </a>
+        {% endif %}
+
+        {% if pagination.has_next %}
+         <a href="?page={{ pagination.next_page }}{% if search_query %}&search={{ search_query }}{% endif %}"
+           class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+          Siguiente
+         <i class="fas fa-chevron-right ml-2 text-gray-500 dark:text-gray-400"></i>
+        </a>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% block scripts %}
+<script src="{% static 'js/pokemon_list.js' %}"></script>
+{% endblock %}
+
+{% endblock %}
